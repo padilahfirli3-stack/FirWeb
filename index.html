@@ -3,40 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FirWeb - Home</title>
+    <title>FirWeb</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <!-- Top Bar Status Akun -->
         <div class="top-bar">
-            <span id="welcome-user">Halo, Tamu</span>
-            <a href="login.html" class="account-btn" id="account-btn">ACCOUNT</a>
+            <span id="user-info">Halo, Tamu</span>
+            <a href="login.html" class="btn" id="auth-btn">Sign In</a>
         </div>
 
-        <div class="main-header">
-            <h1>WELCOME TO FIRWEB</h1>
-            <p>Pilih kategori game yang ingin kamu jelajahi:</p>
+        <div style="text-align: center; margin: 40px 0;">
+            <h1 style="color: #2563eb; font-size: 2.5rem;">FIRWEB</h1>
+            <p>Pilih game pilihanmu:</p>
         </div>
 
-        <!-- Pilihan Kategori Game -->
-        <div class="menu-grid">
-            <a href="content.html?game=minecraft" class="game-card">
-                <h2 class="minecraft-text">MINECRAFT</h2>
-                <p>Skin, Resource Pack & Add-on</p>
+        <div class="grid-menu">
+            <a href="content.html?game=minecraft" class="card">
+                <h2 style="color: #dc2626;">Minecraft</h2>
+                <p>Skin, Add-on, Shader, dll</p>
             </a>
-            <a href="content.html?game=roblox" class="game-card">
-                <h2 class="roblox-text">ROBLOX</h2>
-                <p>Script & Map Uncopylocked</p>
+            <a href="content.html?game=roblox" class="card">
+                <h2 style="color: #0284c7;">Roblox</h2>
+                <p>Map, Script, Avatar, Model</p>
             </a>
         </div>
 
-        <footer style="text-align: center; margin-top: 40px; font-size: 0.9rem; color: #94a3b8;">
+        <footer style="text-align: center; margin-top: 50px; color: #64748b;">
             <p>WEBSITE INI BUATAN FIRLI</p>
-            <p style="margin-top: 5px;">TT | YT | IG | FB</p>
+            <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px;">
+                <a href="https://tiktok.com" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: bold;">TikTok</a>
+                <a href="https://youtube.com" target="_blank" style="color: #dc2626; text-decoration: none; font-weight: bold;">YouTube</a>
+            </div>
         </footer>
     </div>
-
     <script src="script.js"></script>
 </body>
-</html>
+        </html>
