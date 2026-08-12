@@ -1,14 +1,36 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. TEMA SISTEM & CUSTOM
+    const themeSelector = document.getElementById("theme-selector");
+    const savedTheme = localStorage.getItem("firweb_theme") || "light";
+    if (themeSelector) themeSelector.value = savedTheme;
+    applyTheme(savedTheme);
+
+    if (themeSelector) {
+        themeSelector.addEventListener("change", (e) => {
+            let t = e.target.value;
+            localStorage.setItem("firweb_theme", t);
+            applyTheme(t);
+        });
+    }
+
+    function applyTheme(t) {
+        document.body.className = "";
+        if (t === "dark") document.body.classList.add("dark");
+        else if (t === "gradient") document.body.classList.add("gradient");
+        else if (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.body.classList.add("dark");
+        }
+    }
+
+    // 2. AUTH & SESSION
     const currentUser = localStorage.getItem("firweb_user");
     const currentRole = localStorage.getItem("firweb_role");
-
-    // 1. Header Auth Status
     const userInfo = document.getElementById("user-info");
     const authBtn = document.getElementById("auth-btn");
+
     if (userInfo && authBtn) {
         if (currentUser) {
-            let badge = currentRole === "admin" ? " <span class='blue-badge'>✓</span>" : "";
-            userInfo.innerHTML = `Halo, <a href="profile.html?user=${currentUser}" style="text-decoration:none; color:inherit;"><b>${currentUser}</b></a>${badge}`;
+            userInfo.innerHTML = `Halo, <a href="profile.html" style="color:var(--primary); text-decoration:none;"><b>${currentUser}</b></a>`;
             authBtn.textContent = "Keluar";
             authBtn.href = "#";
             authBtn.addEventListener("click", () => {
@@ -23,25 +45,58 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 2. Login & Pendaftaran Akun (Cek Password & Nama Unik + Google Simluasi)
+    // 3. VALIDASI PASSWORD REALTIME & LOGIN
+    const passwordInput = document.getElementById("password");
     const loginForm = document.getElementById("login-form");
+    const errorMsg = document.getElementById("error-msg");
+
+    if (passwordInput) {
+        passwordInput.addEventListener("input", () => {
+            let val = passwordInput.value;
+            let len = val.length >= 8;
+            let upper = /[A-Z]/.test(val);
+            let num = /[0-9]/.test(val);
+
+            updateRuleUI("rule-len", len);
+            updateRuleUI("rule-upper", upper);
+            updateRuleUI("rule-num", num);
+        });
+    }
+
+    function updateRuleUI(id, isValid) {
+        let el = document.getElementById(id);
+        if (!el) return;
+        if (isValid) {
+            el.className = "rule-item rule-green";
+            el.textContent = el.textContent.replace("•", "✓");
+        } else {
+            el.className = "rule-item rule-red";
+            el.textContent = el.textContent.replace("✓", "•");
+        }
+    }
+
     if (loginForm) {
         loginForm.addEventListener("submit", (e) => {
             e.preventDefault();
             let u = document.getElementById("username").value.trim();
-            let p = document.getElementById("password").value;
-            let db = JSON.parse(localStorage.getItem("firweb_db_users") || "{}");
+            let p = passwordInput.value;
 
+            if (p.length < 8 || !/[A-Z]/.test(p) || !/[0-9]/.test(p)) {
+                errorMsg.textContent = "Password belum memenuhi aturan di atas!";
+                return;
+            }
+
+            let db = JSON.parse(localStorage.getItem("firweb_db_users") || "{}");
             if (db[u]) {
                 if (db[u].password !== p) {
-                    alert("Password salah! Tidak bisa masuk.");
+                    errorMsg.textContent = "Password salah!";
                     return;
                 }
                 localStorage.setItem("firweb_user", u);
                 localStorage.setItem("firweb_role", db[u].role);
             } else {
                 let role = (u === "FirliOfc") ? "admin" : "user";
-                db[u] = { password: p, role: role };
+                db[u] = { password: p, role: role, display: u, lastDisplayChange: 0, lastUserChange: 0 };
                 localStorage.setItem("firweb_db_users", JSON.stringify(db));
                 localStorage.setItem("firweb_user", u);
                 localStorage.setItem("firweb_role", role);
@@ -49,220 +104,228 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "index.html";
         });
 
-        document.getElementById("google-btn").addEventListener("click", () => {
-            let googleUser = "GoogleUser_" + Math.floor(Math.random() * 1000);
-            localStorage.setItem("firweb_user", googleUser);
+        document.getElementById("google-login-btn").addEventListener("click", () => {
+            let gName = prompt("Pilih/Masukkan Username baru dari akun Google Anda:");
+            if (!gName) return;
+            let db = JSON.parse(localStorage.getItem("firweb_db_users") || "{}");
+            if (db[gName]) {
+                alert("Username sudah terpakai!");
+                return;
+            }
+            db[gName] = { password: "GoogleLogin123", role: "user", display: gName, lastDisplayChange: 0, lastUserChange: 0 };
+            localStorage.setItem("firweb_db_users", JSON.stringify(db));
+            localStorage.setItem("firweb_user", gName);
             localStorage.setItem("firweb_role", "user");
-            alert("Berhasil masuk dengan akun Google!");
             window.location.href = "index.html";
         });
     }
 
-    // 3. Pengaturan Kategori Berdasarkan Game di Halaman Upload
+    // 4. UPLOAD & EDIT KONTEN (VERTIKAL & SCRIPT KEBAWAH)
     const upGame = document.getElementById("up-game");
     const upCategory = document.getElementById("up-category");
-    const versionWrapper = document.getElementById("version-wrapper");
     const scriptSection = document.getElementById("script-section");
-    const downloadSection = document.getElementById("download-section");
+    const robuxWrapper = document.getElementById("robux-wrapper");
+    const uploadMethod = document.getElementById("upload-method");
+    const inputFileWrap = document.getElementById("input-file-wrap");
+    const inputLinkWrap = document.getElementById("input-link-wrap");
 
-    function updateCategories() {
+    function setupCategories() {
         if (!upCategory) return;
         upCategory.innerHTML = "";
-        let game = upGame.value;
-        let cats = [];
-        if (game === "minecraft") {
-            cats = ["Skin", "World", "Add-on", "Resource pack", "Behavior pack", "Shader", "Texture pack"];
-            if (versionWrapper) versionWrapper.style.display = "block";
-        } else {
-            cats = ["Uncopylocked", "Game", "Script", "Script Exploit", "Avatar", "Model"];
-            if (versionWrapper) versionWrapper.style.display = "none";
-        }
+        let cats = upGame.value === "minecraft" 
+            ? ["Skin", "World", "Add-on", "Resource pack", "Behavior pack", "Shader", "Texture pack"]
+            : ["Uncopylocked", "Game", "Script", "Script Exploit", "Avatar", "Model"];
+        
         cats.forEach(c => {
             let opt = document.createElement("option");
             opt.value = c; opt.textContent = c;
             upCategory.appendChild(opt);
         });
-        toggleScriptMode();
+        checkSpecialCategories();
     }
 
-    function toggleScriptMode() {
+    function checkSpecialCategories() {
         if (!upCategory) return;
         let val = upCategory.value;
-        if (val === "Script" || val === "Script Exploit") {
-            if (scriptSection) scriptSection.style.display = "block";
-            if (downloadSection) downloadSection.style.display = "none";
-        } else {
-            if (scriptSection) scriptSection.style.display = "none";
-            if (downloadSection) downloadSection.style.display = "block";
-        }
+        if (scriptSection) scriptSection.style.display = (val === "Script" || val === "Script Exploit") ? "block" : "none";
+        if (robuxWrapper) robuxWrapper.style.display = (val === "Avatar") ? "block" : "none";
     }
 
     if (upGame) {
-        upGame.addEventListener("change", updateCategories);
-        upCategory.addEventListener("change", toggleScriptMode);
-        updateCategories();
+        upGame.addEventListener("change", setupCategories);
+        upCategory.addEventListener("change", checkSpecialCategories);
+        setupCategories();
     }
 
-    // Tambah Kolom Script Dinamis Tanpa Batas
-    const addScriptBtn = document.getElementById("add-script-btn");
-    const scriptContainer = document.getElementById("script-container");
-    if (addScriptBtn && scriptContainer) {
-        let scriptCount = 0;
-        function addScriptField() {
-            scriptCount++;
-            let div = document.createElement("div");
-            div.style.marginBottom = "10px";
-            div.innerHTML = `<input type="text" class="script-input" placeholder="Script ${scriptCount} (Tulis atau paste kode..." required>`;
-            scriptContainer.appendChild(div);
-        }
-        addScriptField(); // Minimal 1 kolom awal
-        addScriptBtn.addEventListener("click", addScriptField);
-    }
-
-    // Proses Submit Upload
-    const uploadForm = document.getElementById("upload-form");
-    if (uploadForm) {
-        if (!currentUser) {
-            alert("Harus login dulu untuk upload!");
-            window.location.href = "login.html";
-        }
-        uploadForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            let game = upGame.value;
-            let cat = upCategory.value;
-            let title = document.getElementById("up-title").value;
-            let thumb = document.getElementById("up-thumbnail").value;
-            let desc = document.getElementById("up-desc").value;
-            let robux = document.getElementById("up-robux").value || 0;
-            let version = versionWrapper ? document.getElementById("up-version").value : "";
-
-            let scriptsArr = [];
-            if (cat === "Script" || cat === "Script Exploit") {
-                document.querySelectorAll(".script-input").forEach(inp => {
-                    if (inp.value) scriptsArr.push(inp.value);
-                });
+    if (uploadMethod) {
+        uploadMethod.addEventListener("change", () => {
+            if (uploadMethod.value === "file") {
+                inputFileWrap.style.display = "block";
+                inputLinkWrap.style.display = "none";
+            } else {
+                inputFileWrap.style.display = "none";
+                inputLinkWrap.style.display = "block";
             }
-            let link = document.getElementById("up-link") ? document.getElementById("up-link").value : "";
-
-            let post = {
-                id: Date.now(),
-                author: currentUser,
-                isAdmin: currentRole === "admin",
-                game, category: cat, title, thumb, desc, robux, version, scripts: scriptsArr, link,
-                likes: 0, comments: []
-            };
-
-            let posts = JSON.parse(localStorage.getItem("firweb_posts") || "[]");
-            posts.unshift(post);
-            localStorage.setItem("firweb_posts", JSON.stringify(posts));
-            alert("Konten berhasil diupload!");
-            window.location.href = `content.html?game=${game}`;
         });
     }
 
-    // 4. Halaman Tampil Konten
+    // Tambah Script Kebawah Tanpa Batas
+    const addScriptBtn = document.getElementById("add-script-btn");
+    const scriptContainer = document.getElementById("script-container");
+    if (addScriptBtn && scriptContainer) {
+        function addScriptRow(val = "") {
+            let div = document.createElement("div");
+            div.innerHTML = `<textarea class="script-row" rows="2" placeholder="Tulis kode script...">${val}</textarea>`;
+            scriptContainer.appendChild(div);
+        }
+        if (scriptContainer.children.length === 0) addScriptRow();
+        addScriptBtn.addEventListener("click", () => addScriptRow());
+    }
+
+    // Submit Upload / Edit
+    const uploadForm = document.getElementById("upload-form");
+    if (uploadForm) {
+        if (!currentUser) { window.location.href = "login.html"; }
+
+        // Cek jika mode Edit
+        let editId = new URLSearchParams(window.location.search).get("edit");
+        if (editId) {
+            document.getElementById("form-heading").textContent = "Edit Konten";
+            let posts = JSON.parse(localStorage.getItem("firweb_posts") || "[]");
+            let target = posts.find(p => p.id == editId);
+            if (target) {
+                document.getElementById("edit-id").value = target.id;
+                upGame.value = target.game;
+                setupCategories();
+                upCategory.value = target.category;
+                checkSpecialCategories();
+                document.getElementById("up-title").value = target.title;
+                document.getElementById("up-desc").value = target.desc;
+                document.getElementById("up-robux").value = target.robux || 0;
+            }
+        }
+
+        uploadForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let id = document.getElementById("edit-id").value || Date.now();
+            let game = upGame.value;
+            let cat = upCategory.value;
+            let title = document.getElementById("up-title").value;
+            let desc = document.getElementById("up-desc").value;
+            let robux = document.getElementById("up-robux").value || 0;
+
+            let thumbLink = document.getElementById("up-thumb-link").value;
+            let thumbFile = document.getElementById("up-thumb-file").files[0];
+
+            let scriptsArr = [];
+            document.querySelectorAll(".script-row").forEach(el => {
+                if (el.value) scriptsArr.push(el.value);
+            });
+
+            function finalizeSave(thumbUrl) {
+                let post = {
+                    id: Number(id), author: currentUser,
+                    game, category: cat, title, thumb: thumbUrl || "https://via.placeholder.com/300",
+                    desc, robux, scripts: scriptsArr
+                };
+
+                let posts = JSON.parse(localStorage.getItem("firweb_posts") || "[]");
+                let idx = posts.findIndex(p => p.id == id);
+                if (idx >= 0) posts[idx] = post;
+                else posts.unshift(post);
+
+                localStorage.setItem("firweb_posts", JSON.stringify(posts));
+                alert("Konten berhasil disimpan!");
+                window.location.href = `content.html?game=${game}`;
+            }
+
+            if (thumbFile) {
+                let reader = new FileReader();
+                reader.onload = (ev) => finalizeSave(ev.target.result);
+                reader.readAsDataURL(thumbFile);
+            } else {
+                finalizeSave(thumbLink);
+            }
+        });
+    }
+
+    // 5. TAMPILAN KONTEN VERTIKAL & TOMBOL SALIN SCRIPT
     const urlParams = new URLSearchParams(window.location.search);
     const gameParam = urlParams.get("game");
-    const categoryTitle = document.getElementById("category-title");
     const postsList = document.getElementById("posts-list");
+    const categoryTitle = document.getElementById("category-title");
     const fabUpload = document.getElementById("fab-upload");
 
-    if (gameParam && categoryTitle) {
+    if (gameParam && postsList) {
         categoryTitle.textContent = gameParam.toUpperCase() + " Hub";
         if (currentUser && fabUpload) fabUpload.style.display = "flex";
 
-        let posts = JSON.parse(localStorage.getItem("firweb_posts") || "[]");
-        let filtered = posts.filter(p => p.game === gameParam);
+        let posts = JSON.parse(localStorage.getItem("firweb_posts") || "[]").filter(p => p.game === gameParam);
+        postsList.innerHTML = posts.length === 0 ? "<p>Belum ada konten.</p>" : "";
 
-        if (filtered.length === 0) {
-            postsList.innerHTML = "<p>Belum ada konten di sini.</p>";
-        } else {
-            postsList.innerHTML = "";
-            filtered.forEach(p => {
-                let badge = p.isAdmin ? " <span class='blue-badge'>✓</span>" : "";
-                let div = document.createElement("div");
-                div.className = "post-item";
-                
-                let actionHtml = "";
-                if (p.scripts && p.scripts.length > 0) {
-                    actionHtml = p.scripts.map((s, idx) => `<button class="btn copy-btn" data-code="${encodeURIComponent(s)}" style="margin:5px 5px 5px 0;">Copy Script ${idx+1}</button>`).join("");
-                } else {
-                    actionHtml = `<a href="${p.link}" target="_blank" class="btn">Download</a>`;
-                }
+        posts.forEach(p => {
+            let div = document.createElement("div");
+            div.className = "post-item-vertical";
 
-                div.innerHTML = `
-                    <div style="display:flex; gap:15px;">
-                        <img src="${p.thumb}" alt="thumb" style="width:100px; height:100px; object-fit:cover; border-radius:6px;">
-                        <div>
-                            <h3>${p.title} <span style="font-size:0.8rem; color:#64748b;">[${p.category}]</span></h3>
-                            <p style="font-size:0.85rem; color:#64748b;">Oleh: <a href="profile.html?user=${p.author}">${p.author}</a>${badge}</p>
-                            <p style="margin: 5px 0;">${p.desc}</p>
-                            ${p.robux > 0 ? `<p style="color:#d97706; font-weight:bold;">Harga: ${p.robux} Robux</p>` : ""}
-                            <div style="margin-top:10px;">${actionHtml}</div>
-                        </div>
+            let scriptsHtml = "";
+            if (p.scripts && p.scripts.length > 0) {
+                scriptsHtml = p.scripts.map((s, idx) => `
+                    <div style="display:flex; gap:10px; margin-top:5px;">
+                        <textarea rows="2" readonly style="flex:1;">${s}</textarea>
+                        <button class="btn copy-script-btn" data-code="${encodeURIComponent(s)}">Salin Script ${idx+1}</button>
                     </div>
-                `;
-                postsList.appendChild(div);
-            });
+                `).join("");
+            }
 
-            // Tombol Copy Script
-            document.querySelectorAll(".copy-btn").forEach(b => {
-                b.addEventListener("click", (e) => {
-                    let code = decodeURIComponent(e.target.getAttribute("data-code"));
-                    navigator.clipboard.writeText(code);
-                    alert("Script berhasil disalin!");
-                });
+            let editBtn = (currentUser === p.author || currentRole === "admin") ? `<a href="upload.html?edit=${p.id}" class="btn" style="background:#d97706; margin-top:5px;">Edit Konten</a>` : "";
+
+            div.innerHTML = `
+                <img src="${p.thumb}" class="post-thumb">
+                <h3>${p.title} <span style="font-size:0.8rem; color:var(--primary);">[${p.category}]</span></h3>
+                <p style="font-size:0.85rem; color:#64748b;">Oleh: ${p.author}</p>
+                <p>${p.desc}</p>
+                ${p.robux > 0 ? `<p style="color:#d97706; font-weight:bold;">Harga: ${p.robux} Robux</p>` : ""}
+                ${scriptsHtml}
+                ${editBtn}
+            `;
+            postsList.appendChild(div);
+        });
+
+        document.querySelectorAll(".copy-script-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                let code = decodeURIComponent(e.target.getAttribute("data-code"));
+                navigator.clipboard.writeText(code);
+                alert("Script berhasil disalin!");
             });
-        }
+        });
     }
 
-    // 5. Halaman Profil Pengguna, Follow, & DM
-    const profileName = document.getElementById("profile-name");
-    const targetUser = new URLSearchParams(window.location.search).get("user");
-    if (profileName && targetUser) {
-        document.getElementById("user-title-display").textContent = targetUser + (targetUser === "FirliOfc" ? " ✓" : "");
-        profileName.textContent = `Profil: ${targetUser}`;
+    // 6. PROFIL & BATASAN WAKTU GANTI NAMA
+    const newUsernameInput = document.getElementById("new-username");
+    if (newUsernameInput) {
+        let db = JSON.parse(localStorage.getItem("firweb_db_users") || "{}");
+        let userData = db[currentUser] || {};
+        document.getElementById("profile-username").textContent = "@" + currentUser;
+        document.getElementById("profile-display-name").textContent = userData.display || currentUser;
+        newUsernameInput.value = currentUser;
 
-        let followBtn = document.getElementById("follow-btn");
-        let follows = JSON.parse(localStorage.getItem(`firweb_follows_${targetUser}`) || "[]");
-        document.getElementById("follower-count").textContent = `Pengikut: ${follows.length}`;
+        document.getElementById("save-username-btn").addEventListener("click", () => {
+            let now = Date.now();
+            let limit = 30 * 30 * 24 * 60 * 60 * 1000; // 30 bulan
+            if (userData.lastUserChange && (now - userData.lastUserChange < limit)) {
+                alert("Username baru bisa diubah kembali setelah 30 bulan!");
+                return;
+            }
+            let newU = newUsernameInput.value.trim();
+            if (db[newU]) { alert("Username sudah dipakai!"); return; }
 
-        if (currentUser && currentUser !== targetUser) {
-            if (follows.includes(currentUser)) followBtn.textContent = "Unfollow";
-            followBtn.addEventListener("click", () => {
-                if (follows.includes(currentUser)) {
-                    follows = follows.filter(f => f !== currentUser);
-                    followBtn.textContent = "Follow";
-                } else {
-                    follows.push(currentUser);
-                    followBtn.textContent = "Unfollow";
-                }
-                localStorage.setItem(`firweb_follows_${targetUser}`, JSON.stringify(follows));
-                document.getElementById("follower-count").textContent = `Pengikut: ${follows.length}`;
-            });
-        } else {
-            followBtn.style.display = "none";
-        }
-
-        // Fitur DM Sederhana
-        let sendDmBtn = document.getElementById("send-dm-btn");
-        let dmList = document.getElementById("dm-list");
-        let dmsKey = `firweb_dm_${targetUser}`;
-        function loadDMs() {
-            let dms = JSON.parse(localStorage.getItem(dmsKey) || "[]");
-            dmList.innerHTML = dms.map(d => `<b>${d.from}:</b> ${d.text}`).join("<br>") || "Belum ada pesan.";
-        }
-        loadDMs();
-
-        sendDmBtn.addEventListener("click", () => {
-            if (!currentUser) { alert("Login dulu untuk kirim DM!"); return; }
-            let text = document.getElementById("dm-text").value.trim();
-            if(!text) return;
-            let dms = JSON.parse(localStorage.getItem(dmsKey) || "[]");
-            dms.push({ from: currentUser, text });
-            localStorage.setItem(dmsKey, JSON.stringify(dms));
-            document.getElementById("dm-text").value = "";
-            loadDMs();
+            db[newU] = db[currentUser];
+            delete db[currentUser];
+            db[newU].lastUserChange = now;
+            localStorage.setItem("firweb_db_users", JSON.stringify(db));
+            localStorage.setItem("firweb_user", newU);
+            alert("Username berhasil diubah!");
+            window.location.reload();
         });
     }
 });
