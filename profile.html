@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengguna - FirWeb</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <h2 id="profile-name" style="color: #2563eb;">Profil</h2>
+            <a href="index.html" class="btn" style="background-color: #64748b;">Beranda</a>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+            <h3 id="user-title-display">Nama Pengguna</h3>
+            <p id="follower-count" style="color: #64748b; margin: 10px 0;">Pengikut: 0</p>
+            <button id="follow-btn" class="btn">Follow</button>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h4>Kirim Pesan (DM):</h4>
+            <input type="text" id="dm-text" placeholder="Tulis pesan..." style="margin-top: 10px;">
+            <button id="send-dm-btn" class="btn">Kirim Pesan</button>
+            <div id="dm-list" style="margin-top: 15px; font-size: 0.9rem; background: #f8fafc; padding: 10px; border-radius: 6px;"></div>
+        </div>
+
+        <h3>Konten Buatan Pengguna Ini:</h3>
+        <div id="user-posts" style="margin-top: 15px;"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
