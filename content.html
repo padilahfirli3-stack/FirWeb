@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FirWeb - Konten Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <h2 id="page-title" style="color: #38bdf8; font-size: 1.2rem;">Kategori Game</h2>
+            <a href="index.html" class="account-btn" style="background-color: #475569; color: white;">← Beranda</a>
+        </div>
+
+        <!-- Form Upload Konten (Hanya muncul jika sudah login) -->
+        <section id="upload-section" style="display: none;">
+            <h3>📤 Upload Konten Baru</h3>
+            <form id="upload-form" style="margin-top: 10px;">
+                <input type="text" id="content-title" placeholder="Judul Konten (Contoh: Shader Ultra / Script Ant Tycoon)" required>
+                <select id="content-category">
+                    <option value="Skin">Skin</option>
+                    <option value="Add-on">Add-on / Resource Pack</option>
+                    <option value="Script">Script</option>
+                    <option value="Map Uncopylocked">Map Uncopylocked</option>
+                </select>
+                <textarea id="content-desc" placeholder="Link download atau deskripsi lengkap..." rows="3" required></textarea>
+                <button type="submit" class="btn">Posting Konten</button>
+            </form>
+        </section>
+
+        <!-- Daftar Konten -->
+        <section>
+            <h3>📥 Daftar Konten</h3>
+            <div id="posts-container" style="margin-top: 15px;">
+                <p>Memuat konten...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
