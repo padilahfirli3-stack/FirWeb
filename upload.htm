@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Konten - FirWeb</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin-top: 20px;">
+        <div style="background: white; padding: 25px; border-radius: 10px;">
+            <h2 style="color: #2563eb; margin-bottom: 15px;">Upload Konten Baru</h2>
+            
+            <form id="upload-form">
+                <label>Pilih Game:</label>
+                <select id="up-game" required>
+                    <option value="minecraft">Minecraft</option>
+                    <option value="roblox">Roblox</option>
+                </select>
+
+                <label>Pilih Kategori:</label>
+                <select id="up-category" required></select>
+
+                <div id="version-wrapper">
+                    <label>Versi Game:</label>
+                    <select id="up-version">
+                        <option value="MCPE">MCPE</option>
+                        <option value="MCBE">MCBE</option>
+                        <option value="Java">Java</option>
+                    </select>
+                </div>
+
+                <label>Judul (Wajib):</label>
+                <input type="text" id="up-title" required>
+
+                <label>Thumbnail (Wajib - Link Gambar):</label>
+                <input type="text" id="up-thumbnail" placeholder="https://..." required>
+
+                <label>Keterangan / Deskripsi (Wajib):</label>
+                <textarea id="up-desc" rows="4" required></textarea>
+
+                <!-- Bagian Khusus Script Dinamis -->
+                <div id="script-section" style="display: none; background: #f8fafc; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <label style="font-weight: bold;">Kolom Script (Tambah tanpa batas):</label>
+                    <div id="script-container"></div>
+                    <button type="button" id="add-script-btn" class="btn" style="background-color: #10b981; margin-top: 5px;">+ Tambahkan Kolom Script</button>
+                </div>
+
+                <!-- Bagian Link / File Umum -->
+                <div id="download-section">
+                    <label>Link Download / File (Wajib):</label>
+                    <input type="text" id="up-link" placeholder="https://..." required>
+                </div>
+
+                <label>Harga Robux (Khusus Kategori Avatar Roblox):</label>
+                <input type="number" id="up-robux" placeholder="0 jika gratis">
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Publikasikan</button>
+            </form>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="index.html" style="color: #64748b; text-decoration: none;">Batal</a>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
