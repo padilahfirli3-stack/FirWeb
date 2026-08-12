@@ -10,33 +10,33 @@
     <div class="container">
         <div class="top-bar">
             <span id="user-info">Halo, Tamu</span>
-            <a href="login.html" class="btn" id="auth-btn">Sign In</a>
+            <div>
+                <select id="theme-selector" style="padding: 5px; margin-right: 10px; width: auto;">
+                    <option value="light">Terang</option>
+                    <option value="dark">Gelap</option>
+                    <option value="system">Sistem</option>
+                    <option value="gradient">Gradasi Custom</option>
+                </select>
+                <a href="login.html" class="btn" id="auth-btn">Sign In</a>
+            </div>
         </div>
 
-        <div style="text-align: center; margin: 40px 0;">
-            <h1 style="color: #2563eb; font-size: 2.5rem;">FIRWEB</h1>
-            <p>Pilih game pilihanmu:</p>
+        <div style="text-align: center; margin: 30px 0;">
+            <h1 style="color: var(--primary); font-size: 2.5rem;">FIRWEB</h1>
+            <p>Pilih kategori game:</p>
         </div>
 
-        <div class="grid-menu">
-            <a href="content.html?game=minecraft" class="card">
+        <div class="vertical-stack">
+            <a href="content.html?game=minecraft" class="card" style="text-align:center; text-decoration:none; color:inherit;">
                 <h2 style="color: #dc2626;">Minecraft</h2>
                 <p>Skin, Add-on, Shader, dll</p>
             </a>
-            <a href="content.html?game=roblox" class="card">
+            <a href="content.html?game=roblox" class="card" style="text-align:center; text-decoration:none; color:inherit;">
                 <h2 style="color: #0284c7;">Roblox</h2>
                 <p>Map, Script, Avatar, Model</p>
             </a>
         </div>
-
-        <footer style="text-align: center; margin-top: 50px; color: #64748b;">
-            <p>WEBSITE INI BUATAN FIRLI</p>
-            <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px;">
-                <a href="https://tiktok.com" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: bold;">TikTok</a>
-                <a href="https://youtube.com" target="_blank" style="color: #dc2626; text-decoration: none; font-weight: bold;">YouTube</a>
-            </div>
-        </footer>
     </div>
     <script src="script.js"></script>
 </body>
-        </html>
+    </html>
