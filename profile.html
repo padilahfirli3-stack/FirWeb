@@ -3,32 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Pengguna - FirWeb</title>
+    <title>Profil - FirWeb</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="top-bar">
-            <h2 id="profile-name" style="color: #2563eb;">Profil</h2>
-            <a href="index.html" class="btn" style="background-color: #64748b;">Beranda</a>
-        </div>
+    <div class="container" style="max-width: 500px; margin-top: 30px;">
+        <div class="card" style="text-align: center;">
+            <h2 id="profile-display-name">Nama</h2>
+            <p id="profile-username" style="color: #64748b; margin-bottom: 20px;">@username</p>
+            
+            <div style="text-align: left; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <h4>Pengaturan Akun</h4>
+                <label style="font-size:0.9rem; margin-top:10px; display:block;">Display Name (Bisa ubah tiap 7 hari):</label>
+                <input type="text" id="new-display-name">
+                <button id="save-display-btn" class="btn" style="margin-bottom: 15px;">Simpan Display Name</button>
 
-        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-            <h3 id="user-title-display">Nama Pengguna</h3>
-            <p id="follower-count" style="color: #64748b; margin: 10px 0;">Pengikut: 0</p>
-            <button id="follow-btn" class="btn">Follow</button>
+                <label style="font-size:0.9rem; display:block;">Username (Bisa ubah tiap 30 bulan):</label>
+                <input type="text" id="new-username">
+                <button id="save-username-btn" class="btn" style="background-color: #d97706;">Simpan Username</button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <a href="index.html" class="btn" style="background-color: #64748b;">Beranda</a>
+            </div>
         </div>
-
-        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h4>Kirim Pesan (DM):</h4>
-            <input type="text" id="dm-text" placeholder="Tulis pesan..." style="margin-top: 10px;">
-            <button id="send-dm-btn" class="btn">Kirim Pesan</button>
-            <div id="dm-list" style="margin-top: 15px; font-size: 0.9rem; background: #f8fafc; padding: 10px; border-radius: 6px;"></div>
-        </div>
-
-        <h3>Konten Buatan Pengguna Ini:</h3>
-        <div id="user-posts" style="margin-top: 15px;"></div>
     </div>
     <script src="script.js"></script>
 </body>
-</html>
+        </html>
