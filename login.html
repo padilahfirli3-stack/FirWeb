@@ -1,30 +1,38 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login / Sign Up - FirWeb</title>
+    <title>Login - FirWeb</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container" style="max-width: 400px; margin-top: 50px;">
-        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h2 style="margin-bottom: 15px; color: #2563eb;">Akun FirWeb</h2>
+    <div class="container" style="max-width: 400px; margin-top: 40px;">
+        <div class="card">
+            <h2 style="color: var(--primary); margin-bottom: 15px;">Login / Sign Up</h2>
             
-            <form id="login-form">
-                <input type="text" id="username" placeholder="Nama Akun" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit" class="btn" style="width: 100%;">Masuk / Daftar</button>
-            </form>
+            <button id="google-login-btn" class="btn" style="background-color: #db4437; width: 100%; margin-bottom: 15px;">Masuk dengan Google</button>
+            <hr style="border-color: var(--border-color); margin-bottom: 15px;">
 
-            <button id="google-btn" class="btn" style="width: 100%; background-color: #db4437; margin-top: 10px;">Masuk dengan Google</button>
-            
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                
+                <!-- Peraturan Password Realtime -->
+                <div id="password-rules" style="margin-bottom: 15px; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 6px;">
+                    <div id="rule-len" class="rule-item rule-red">• Minimal 8 Karakter</div>
+                    <div id="rule-upper" class="rule-item rule-red">• Ada Huruf Besar</div>
+                    <div id="rule-num" class="rule-item rule-red">• Ada Angka</div>
+                </div>
+                <div id="error-msg" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 10px;"></div>
+
+                <button type="submit" class="btn" style="width: 100%;">Masuk</button>
+            </form>
             <div style="text-align: center; margin-top: 15px;">
-                <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">← Kembali</a>
+                <a href="index.html" style="color: var(--text-color); font-size: 0.9rem;">← Kembali</a>
             </div>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
