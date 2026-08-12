@@ -1,29 +1,30 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FirWeb</title>
+    <title>Login / Sign Up - FirWeb</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container" style="max-width: 400px; margin-top: 50px;">
-        <section>
-            <h2 id="form-title" style="margin-bottom: 15px; color: #38bdf8;">Sign In / Sign Up</h2>
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">*Nama <b>FirliOfc</b> otomatis menjadi Admin.</p>
+        <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="margin-bottom: 15px; color: #2563eb;">Akun FirWeb</h2>
             
-            <form id="auth-form">
-                <input type="text" id="username" placeholder="Masukkan Nama Akun" required>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Nama Akun" required>
                 <input type="password" id="password" placeholder="Password" required>
                 <button type="submit" class="btn" style="width: 100%;">Masuk / Daftar</button>
             </form>
+
+            <button id="google-btn" class="btn" style="width: 100%; background-color: #db4437; margin-top: 10px;">Masuk dengan Google</button>
             
             <div style="text-align: center; margin-top: 15px;">
-                <a href="index.html" style="color: #38bdf8; text-decoration: none; font-size: 0.9rem;">← Kembali ke Beranda</a>
+                <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">← Kembali</a>
             </div>
-        </section>
+        </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
