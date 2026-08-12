@@ -3,65 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Konten - FirWeb</title>
+    <title>Upload / Edit Konten - FirWeb</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container" style="max-width: 600px; margin-top: 20px;">
-        <div style="background: white; padding: 25px; border-radius: 10px;">
-            <h2 style="color: #2563eb; margin-bottom: 15px;">Upload Konten Baru</h2>
+        <div class="card">
+            <h2 id="form-heading" style="color: var(--primary); margin-bottom: 15px;">Upload Konten</h2>
             
             <form id="upload-form">
-                <label>Pilih Game:</label>
+                <input type="hidden" id="edit-id">
+                <label>Game:</label>
                 <select id="up-game" required>
                     <option value="minecraft">Minecraft</option>
                     <option value="roblox">Roblox</option>
                 </select>
 
-                <label>Pilih Kategori:</label>
+                <label>Kategori:</label>
                 <select id="up-category" required></select>
 
-                <div id="version-wrapper">
-                    <label>Versi Game:</label>
-                    <select id="up-version">
-                        <option value="MCPE">MCPE</option>
-                        <option value="MCBE">MCBE</option>
-                        <option value="Java">Java</option>
-                    </select>
-                </div>
-
-                <label>Judul (Wajib):</label>
+                <label>Judul:</label>
                 <input type="text" id="up-title" required>
 
-                <label>Thumbnail (Wajib - Link Gambar):</label>
-                <input type="text" id="up-thumbnail" placeholder="https://..." required>
+                <label>Thumbnail (Pilih File Gambar):</label>
+                <input type="file" id="up-thumb-file" accept="image/*">
+                <input type="text" id="up-thumb-link" placeholder="Atau masukkan link gambar thumbnail">
 
-                <label>Keterangan / Deskripsi (Wajib):</label>
-                <textarea id="up-desc" rows="4" required></textarea>
+                <label>Keterangan / Deskripsi:</label>
+                <textarea id="up-desc" rows="3" required></textarea>
 
-                <!-- Bagian Khusus Script Dinamis -->
-                <div id="script-section" style="display: none; background: #f8fafc; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-                    <label style="font-weight: bold;">Kolom Script (Tambah tanpa batas):</label>
-                    <div id="script-container"></div>
-                    <button type="button" id="add-script-btn" class="btn" style="background-color: #10b981; margin-top: 5px;">+ Tambahkan Kolom Script</button>
+                <!-- Pilihan Robux khusus Avatar Roblox -->
+                <div id="robux-wrapper" style="display: none;">
+                    <label>Harga Robux:</label>
+                    <input type="number" id="up-robux" value="0">
                 </div>
 
-                <!-- Bagian Link / File Umum -->
-                <div id="download-section">
-                    <label>Link Download / File (Wajib):</label>
-                    <input type="text" id="up-link" placeholder="https://..." required>
+                <!-- Script Builder Kebawah -->
+                <div id="script-section" style="display: none;">
+                    <label style="font-weight: bold;">Kolom Script:</label>
+                    <div id="script-container" class="vertical-stack"></div>
+                    <button type="button" id="add-script-btn" class="btn" style="background-color: #10b981; margin-top: 10px;">+ Tambah Kolom Script</button>
                 </div>
 
-                <label>Harga Robux (Khusus Kategori Avatar Roblox):</label>
-                <input type="number" id="up-robux" placeholder="0 jika gratis">
+                <!-- Pilihan Upload File atau Link -->
+                <div id="file-link-section">
+                    <label>Metode File:</label>
+                    <select id="upload-method">
+                        <option value="file">Upload File Langsung</option>
+                        <option value="link">Gunakan Link Download</option>
+                    </select>
+                    <div id="input-file-wrap">
+                        <input type="file" id="up-file">
+                    </div>
+                    <div id="input-link-wrap" style="display:none;">
+                        <input type="text" id="up-link" placeholder="https://...">
+                    </div>
+                </div>
 
-                <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Publikasikan</button>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Simpan Konten</button>
             </form>
             <div style="text-align: center; margin-top: 15px;">
-                <a href="index.html" style="color: #64748b; text-decoration: none;">Batal</a>
+                <a href="index.html" style="color: var(--text-color); text-decoration: none;">Batal</a>
             </div>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
-</html>
+                    </html>
